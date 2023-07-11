@@ -5,21 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Image_crop 
+class ImageCrop extends Model
 {
-    /**
-     * crop image method
-     * we get a src image path and cnvert it to an image resource
-     * we calculate where we need to cut the image
-     * 
-     *  */ 
-    public function crop($src_image_path, $dest_image_path, $max_size = 600)
-    {
-        // // 
-        // $dst_x = 0;       
-        // $dst_y = 0;
-        // $dst_width = $max_size;
-        // $dst_height = $max_size;
+    use HasFactory;
+
+    public function crop($src_image_path, $dest_image_path, $max_size = 600){
         
         if (file_exists($src_image_path)) 
         {
@@ -75,9 +65,12 @@ class Image_crop
             }
         }
     }
+
+    
     // create thumbnails to ease cropping
     public function profile_thumb($image_path)
     {
+        dd("here");
         // call the crop method and set the size
         $crop_size = 600;
         // 
@@ -90,6 +83,6 @@ class Image_crop
             $this->crop($image_path,$thumbnail,$crop_size);
         }
         return $thumbnail;
-
+        
     }
 }

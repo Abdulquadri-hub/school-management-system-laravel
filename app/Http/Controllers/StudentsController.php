@@ -11,12 +11,16 @@ use App\Models\User;
 class StudentsController extends Controller
 {
     //
-    public function index(Request $req)
-    {
+    public function index(Request $req){
+
         $page = "Students";
+
+        $user = new User();
+        $rows = $user->all()->where("rank", 'student');
         
         return view('/students.student',[
-            'page' =>$page
+            'page' =>$page,
+            'rows' => $rows
         ]);
     }
 }

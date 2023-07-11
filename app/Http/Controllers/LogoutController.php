@@ -3,17 +3,19 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 
-class LogoutController extends Controller
-{
+class LogoutController extends Controller{
     //
-    public function index(Request $req, )
+    public function logout(Request $req)
     {
-        if(session()->exists('USERS')){
-            $flush = session()->flush();
-            if($flush){
-                return redirect('/login');
-            }
-        }
+        Auth::logout();
+
+        $req->session()->invalidate();
+    
+        $req->session()->regenerateToken();
+
+        return redirect('/login');
     }
 }

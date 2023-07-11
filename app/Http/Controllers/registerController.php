@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash; 
+use Illuminate\Support\Facades\Auth; 
 use Illuminate\Support\Str; 
 use App\Models\User;
 
@@ -21,12 +22,14 @@ class registerController extends Controller
         ]);
     }
 
-    public function save(Request $req)
-    {
+    public function save(Request $req){
+
+        $mode = isset($_GET['mode']) ? $_GET['mode'] : "";
+
         $req->validate([
             'firstname' => "required|string",
             'lastname' => "required|string",
-            'email' => "required|string|email",
+            'email' => "required|string|email|unique:users",
             'gender' => "required|string",
             'rank' => "required|string",
             'password' => "required|max:8",
@@ -49,7 +52,14 @@ class registerController extends Controller
         ]);
 
         if($save){
-            return redirect("/login");
+            if($mode == "students"){
+
+                return redirect("/students");
+            }else{
+                
+                return redirect("/login");
+            }
+
         }
     }
 

@@ -61,12 +61,11 @@
                       <div class="invalid-feedback">Please enter a valid gender!</div>
                     </div>
 
-                    <?php if($mode  == 'students'): ?>
+                    @if($mode  == 'students')
                     <div class="col-12">
                       <input type="text" readonly name="rank" value="student" class="form-control" id="" placeholder="">
                     </div>
-                    <?php endif; ?>
-
+                    @else
                     <div class="col-12">
                       <select class="form-select" name="rank" id="validationCustom04">
                         <option selected disabled value>Rank</option>
@@ -79,6 +78,8 @@
                       </select>
                       <div class="invalid-feedback">Please enter a valid gender!</div>
                     </div>
+                    @endif
+
 
                     <div class="col-12">
                       <input type="password" value="{{old('password')}}" name="password" class="form-control" id="yourPassword" placeholder="Password">
