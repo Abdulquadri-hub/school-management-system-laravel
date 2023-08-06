@@ -17,3 +17,9 @@ function get_image($image, $gender = 'male'){
     return $image;
 }
 
+function get_date($date){
+    if(!empty($date)){
+        return date("jS M, Y",strtotime($date));
+    }
+}
+

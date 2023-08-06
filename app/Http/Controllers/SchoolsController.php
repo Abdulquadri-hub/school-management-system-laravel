@@ -16,7 +16,6 @@ class SchoolsController extends Controller
     public function index(){
 
         $page = "Schools";
-
         $user = new User();
         $school = new School();
         

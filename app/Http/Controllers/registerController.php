@@ -55,8 +55,10 @@ class registerController extends Controller
             if($mode == "students"){
 
                 return redirect("/students");
-            }else{
+            }elseif($mode == "staffs"){
                 
+                return redirect("/staffs");
+            }else{
                 return redirect("/login");
             }
 

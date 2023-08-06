@@ -5,9 +5,10 @@ use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\registerController;
 use App\Http\Controllers\SchoolsController;
-use App\Http\Controllers\UsersController;
+use App\Http\Controllers\StaffsController;
 use App\Http\Controllers\StudentsController;
 use Illuminate\Support\Facades\Route;
 
@@ -23,7 +24,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-Route::get('/logout', [LogoutController::class, 'logout']);
+Route::get('/logout', [LogoutController::class, 'logout'])->name('logout');
 
 Route::get('/register', [registerController::class, 'index'])->name('register');
 Route::post('/register', [registerController::class, 'save']);
@@ -31,11 +32,13 @@ Route::post('/register', [registerController::class, 'save']);
 Route::get('/login', [LoginController::class, 'index'])->name('login');
 Route::post('/login', [LoginController::class, 'save']);
 
-Route::get('/emailverification', [EmailVerificationController::class, 'index']);
+
+Route::get('/emailverification', [EmailVerificationController::class, 'index'])->name('emailverification');
 Route::post('/emailverification', [EmailVerificationController::class, 'index']);
 
-Route::get('/forgotpassword', [ForgotPasswordController::class, 'index']);
-Route::post('/forgotpassword', [ForgotPasswordController::class, 'save']);
+Route::get('/forgotpassword', [ForgotPasswordController::class, 'index'])->name('forgotpassword');
+Route::post('/forgotpassword', [ForgotPasswordController::class, 'email']);
+
 
 Route::get('/forgotpassword/code', [ForgotPasswordController::class, 'code']);
 Route::post('/forgotpassword/code', [ForgotPasswordController::class, 'code']);
@@ -45,10 +48,10 @@ Route::post('/forgotpassword/password', [ForgotPasswordController::class, 'passw
 
 Route::group(['middleware'=>'auth'], function(){
 
-    Route::get('/', [HomeController::class, 'index']);
+    Route::get('/', [HomeController::class, 'index'])->name('home');
 
     // schools routes
-    Route::get('/schools', [SchoolsController::class, 'index']);
+    Route::get('/schools', [SchoolsController::class, 'index'])->name('school');
     
     Route::get('/schools/add', [SchoolsController::class, 'add']);
     Route::post('/schools/add', [SchoolsController::class, 'add']);
@@ -63,16 +66,16 @@ Route::group(['middleware'=>'auth'], function(){
     Route::post('/schools/delete/{id}', [SchoolsController::class, 'delete']);
 
     // staffs routes
-    Route::get('/staffs', [UsersController::class, 'index']);
+    Route::get('/staffs', [StaffsController::class, 'index']);
     
-    Route::get('/staffs/add', [UsersController::class, 'add']);
-    Route::post('/staffs/add', [UsersController::class, 'add']);
+    Route::get('/staffs/add', [StaffsController::class, 'add']);
+    Route::post('/staffs/add', [StaffsController::class, 'add']);
     
-    Route::get('/staffs/edit/{id}', [UsersController::class, 'edit']);
-    Route::post('/staffs/edit/{id}', [UsersController::class, 'edit']);
+    Route::get('/staffs/edit/{id}', [StaffsController::class, 'edit']);
+    Route::post('/staffs/edit/{id}', [StaffsController::class, 'edit']);
     
-    Route::get('/staffs/delete{id}', [UsersController::class, 'delete']);
-    Route::post('/staffs/delete{id}', [UsersController::class, 'delete']);
+    Route::get('/staffs/delete{id}', [StaffsController::class, 'delete']);
+    Route::post('/staffs/delete{id}', [StaffsController::class, 'delete']);
 
     // students routes
     Route::get('/students', [StudentsController::class, 'index']);
@@ -85,6 +88,10 @@ Route::group(['middleware'=>'auth'], function(){
     
     Route::get('/students/delete{id}', [StudentsController::class, 'delete']);
     Route::post('/students/delete{id}', [StudentsController::class, 'delete']);
+
+
+    Route::get('/profile/{userid}', [ProfileController::class, 'index']);
+    Route::post('/profile/{userid}', [ProfileController::class, 'index']);
 
 });
 

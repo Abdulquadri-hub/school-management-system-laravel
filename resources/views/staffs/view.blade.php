@@ -13,7 +13,7 @@
       <li class="breadcrumb-item active">{{$page}}</li>
     </ol>
   </nav>
-</div>
+</div><!-- End Page Title -->
 
 <section class="section">
   <div class="row">
@@ -34,7 +34,7 @@
                 </div>
                 </form>
 
-                <a href="{{url('/register?mode=students')}}">
+                <a href="{{url('/register?mode=staffs')}}">
                     <button class="btn btn-sm btn-primary">
                         <i class="bi bi-plus"></i>
                         Add New
@@ -49,7 +49,7 @@
             
                     @endforeach
                     @else
-                        <h6>No Student were found at this time!</h6>
+                        <h6>No Staff were found at this time!</h6>
                     @endif
                 </div>
 

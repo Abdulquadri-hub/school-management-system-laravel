@@ -16,9 +16,10 @@ class checklogin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(!Auth::check()){
+        if((session()->missing('USERS')) || (!Auth::check())){
             return redirect('/login');
         }
+
         return $next($request);
     }
 }

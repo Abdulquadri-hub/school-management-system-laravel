@@ -9,7 +9,7 @@
     <div class="card-body">
     <h5 class="card-title">{{ucfirst($row->firstname)}} {{ucfirst($row->lastname)}}</h5>
     <p class="card-text">{{ucfirst($row->rank)}} </p>
-    <a href="{{url('school/profile')}}" class="btn btn-primary btn-sm">Profile <i class="bi bi-eye"></i></a>
+    <a href="{{url('profile/'.$row->user_id)}}" class="btn btn-primary btn-sm">Profile <i class="bi bi-eye"></i></a>
 
     @if(isset($_GET['select']))
     <button name="selected" value= "<?=$row->user_id?>" href="" class="btn btn-danger btn-sm float-end">Select</button>

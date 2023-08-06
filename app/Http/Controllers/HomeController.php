@@ -9,7 +9,7 @@ class HomeController extends Controller
 {
     //
     public function index(){
-
+        // dd(session('USERS'));
         return view('/home');
     }
 }

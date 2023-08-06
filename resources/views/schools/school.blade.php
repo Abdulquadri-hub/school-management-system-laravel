@@ -87,6 +87,6 @@
   </div>
 </section>
 
-</main><!-- End #main -->
+</main>
 
 @include('layouts.footer')
