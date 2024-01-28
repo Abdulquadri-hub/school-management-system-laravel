@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Models\School;
 
 class LoginController extends Controller
 {
@@ -26,11 +27,19 @@ class LoginController extends Controller
         if(Auth::attempt($validate, $req->input('remember'))){
 
             $row = Auth::authenticate();
-            $req->session()->put("USERS",$row);
+        
+            
+            $school = new School();
+            $school_row  = $school->where('school_id', $row->school_id)->first();
+
+            $row->school_name = $school_row->school;
+            
+            $req->session()->put("USERS_ROW",$row);
+            
 
             return redirect()->intended('/');
 
-            // dd($req->session()->all());
+            
         }
         return back()->withErrors(['email'=>'Wrong login details']);
     }

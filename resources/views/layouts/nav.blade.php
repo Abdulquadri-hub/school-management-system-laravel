@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Functions;
+
 ?>
     <!-- ======= Header ======= -->
     <header id="header" class="header fixed-top d-flex align-items-center">
@@ -176,8 +177,8 @@ use App\Models\Functions;
       <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
         <img src="{{url('assets/img/profile-img.jpg')}}" alt="Profile" class="rounded-circle">
         <span class="d-none d-md-block dropdown-toggle ps-2">
-          @if(session()->exists("USERS"))
-          {{session()->get('USERS')->firstname . " " . session()->get('USERS')->lastname}}
+          @if(session()->exists("USERS_ROW"))
+          {{session()->get('USERS_ROW')->firstname . " " . session()->get('USERS_ROW')->lastname}}
           @endif
         </span>
       </a><!-- End Profile Iamge Icon -->
@@ -185,13 +186,13 @@ use App\Models\Functions;
       <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
         <li class="dropdown-header">
           <h6>
-          @if(session()->exists("USERS"))
-          {{session('USERS')->firstname . " " . session('USERS')->lastname}}
+          @if(session()->exists("USERS_ROW"))
+          {{session('USERS_ROW')->firstname . " " . session('USERS_ROW')->lastname}}
           @endif
           </h6>
           <span>
-            @if(session()->exists("USERS"))
-            {{ strtoupper(session('USERS')->rank) }}
+            @if(session()->exists("USERS_ROW"))
+            {{ strtoupper(session('USERS_ROW')->rank) }}
             @endif
           </span>
         </li>
@@ -261,21 +262,35 @@ use App\Models\Functions;
 
       <li class="nav-item">
         <a class="nav-link collapsed" href="{{url('/schools')}}">
-          <i class="bi bi-person"></i>
+          <i class="bi bi-house-fill"></i>
           <span>Schools</span>
         </a>
       </li>
 
       <li class="nav-item">
+        <a class="nav-link collapsed" href="{{url('/classes')}}">
+          <i class="bi bi-house"></i>
+          <span>Classes</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{{route('lesson')}}">
+          <i class="bi bi-book-fill"></i>
+          <span>Lessons</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
         <a class="nav-link collapsed" href="{{url('/staffs')}}">
-          <i class="bi bi-person"></i>
+          <i class="bi bi-person-fill"></i>
           <span>Staffs</span>
         </a>
       </li>
 
       <li class="nav-item">
         <a class="nav-link collapsed" href="{{url('/students')}}">
-          <i class="bi bi-person"></i>
+          <i class="bi bi-person-fill"></i>
           <span>Students</span>
         </a>
       </li>

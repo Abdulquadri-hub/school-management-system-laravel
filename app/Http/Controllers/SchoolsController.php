@@ -45,7 +45,7 @@ class SchoolsController extends Controller
             $save = $school->insert([
                 'school' => $req->input('school'),
                 'school_id' => Str::random(),
-                'user_id' => $req->session()->get('USERS')->user_id,
+                'user_id' => $req->session()->get('USERS_ROW')->user_id,
                 'created_at' => date("Y-m-d H:i:s"),
                 'updated_at' => date("Y-m-d H:i:s")
             ]);
@@ -120,6 +120,7 @@ class SchoolsController extends Controller
         $school = new School();
         $switch = $school->switch_school($id);
         if($switch){
+            
             return redirect('/schools')->with('status', 'School swtiched!');
         }
 

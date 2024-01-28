@@ -11,7 +11,7 @@ class School extends Model
 
     public  function switch_school($id){
 
-        if (session()->exists('USERS') && session('USERS')->rank == 'super admin') 
+        if (session()->exists('USERS_ROW') && session('USERS_ROW')->rank == 'super admin') 
         {
             $user = new User();
             $school = new School();
@@ -19,11 +19,11 @@ class School extends Model
 
                 $VAR = ['school_id' => $row->school_id];
 
-                $user->where('id', session('USERS')->id)->update($VAR);
+                $user->where('id', session('USERS_ROW')->id)->update($VAR);
                 
                 // put the new school name and id into the users session
-                session('USERS')->school_id = $row->school_id;
-                session('USERS')->school_name = $row->school;
+                session('USERS_ROW')->school_id = $row->school_id;
+                session('USERS_ROW')->school_name = $row->school;
                 
             }
             return true;

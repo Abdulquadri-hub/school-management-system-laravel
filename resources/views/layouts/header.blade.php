@@ -25,6 +25,7 @@
   <link href="{{url('assets/vendor/quill/quill.bubble.css')}}" rel="stylesheet">
   <link href="{{url('assets/vendor/remixicon/remixicon.css')}}" rel="stylesheet">
   <link href="{{url('assets/vendor/simple-datatables/style.css')}}" rel="stylesheet">
+  <script src="https://cdn.tiny.cloud/1/9ch92ojh4zz59hf57frj3f9wcdaj0xsjtw7hrthfsd596san/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 
   <!-- Template Main CSS File -->
   <link href="{{url('assets/css/style.css')}}" rel="stylesheet">

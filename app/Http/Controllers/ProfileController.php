@@ -8,7 +8,7 @@ use App\Models\User;
 class ProfileController extends Controller
 {
     public function index(Request $req, $userid = ""){
-dd();
+
         $page = "Profile";
 
         $user = new User();

@@ -10,6 +10,8 @@ use App\Http\Controllers\registerController;
 use App\Http\Controllers\SchoolsController;
 use App\Http\Controllers\StaffsController;
 use App\Http\Controllers\StudentsController;
+use App\Http\Controllers\ClassesController;
+use App\Http\Controllers\LessonsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -53,13 +55,13 @@ Route::group(['middleware'=>'auth'], function(){
     // schools routes
     Route::get('/schools', [SchoolsController::class, 'index'])->name('school');
     
-    Route::get('/schools/add', [SchoolsController::class, 'add']);
+    Route::get('/schools/add', [SchoolsController::class, 'add'])->name('school.add');
     Route::post('/schools/add', [SchoolsController::class, 'add']);
     
-    Route::get('/schools/switch/{id}', [SchoolsController::class, 'switch']);
+    Route::get('/schools/switch/{id}', [SchoolsController::class, 'switch'])->name('school.switch');
     // Route::post('/schools/switch/{id}', [SchoolsController::class, 'switch']);
     
-    Route::get('/schools/edit/{id}', [SchoolsController::class, 'edit']);
+    Route::get('/schools/edit/{id}', [SchoolsController::class, 'edit'])->name('school.edit');
     Route::post('/schools/edit/{id}', [SchoolsController::class, 'edit']);
     
     Route::get('/schools/delete/{id}', [SchoolsController::class, 'delete']);
@@ -89,8 +91,33 @@ Route::group(['middleware'=>'auth'], function(){
     Route::get('/students/delete{id}', [StudentsController::class, 'delete']);
     Route::post('/students/delete{id}', [StudentsController::class, 'delete']);
 
+    // classes routes
+    Route::get('/classes', [ClassesController::class, 'index'])->name('class');
+    
+    Route::get('/classes/add', [ClassesController::class, 'add'])->name('class.add');
+    Route::post('/classes/add', [ClassesController::class, 'add']);
+    
+    Route::get('/classes/edit/{id}', [ClassesController::class, 'edit'])->name('class.edit');
+    Route::post('/classes/edit/{id}', [ClassesController::class, 'edit']);
+    
+    Route::get('/classes/delete/{id}', [ClassesController::class, 'delete'])->name('class.delete');
+    Route::post('/classes/delete/{id}', [ClassesController::class, 'delete']);
 
-    Route::get('/profile/{userid}', [ProfileController::class, 'index']);
+    Route::get('/classes/single/{id}', [ClassesController::class, 'single'])->name('class.single');
+    Route::post('/classes/single/{id}', [ClassesController::class, 'single']);
+
+    // lessons routes
+    Route::get('/lessons', [LessonsController::class, 'index'])->name('lesson');
+    Route::get('/lessons/single/{id}', [LessonsController::class, 'single'])->name('lesson.single');
+    Route::post('/lessons/single/{id}', [LessonsController::class, 'single']);
+
+    // materials routes
+    Route::get('/materials', [LessonsController::class, 'index'])->name('material');
+    Route::get('/materials/single/{id}', [LessonsController::class, 'single'])->name('material.single');
+    Route::post('/materials/single/{id}', [LessonsController::class, 'single']);
+
+    // profile routes
+    Route::get('/profile/{userid}', [ProfileController::class, 'index'])->name('profile');
     Route::post('/profile/{userid}', [ProfileController::class, 'index']);
 
 });

@@ -46,7 +46,7 @@ class registerController extends Controller
             'rank' => $req->input('rank'),
             'password' => Hash::make($req->input('password')),
             'user_id' => strtolower($user_id) . "." . Str::random(4),
-            'school_id' => session()->exists("USERS") ? session('USERS')->school_id : "",
+            'school_id' => session()->exists("USERS_ROW") ? session('USERS_ROW')->school_id : "",
             'created_at'=> date("Y-m-d H:i:s"),
             'updated_at'=> date("Y-m-d H:i:s")
         ]);

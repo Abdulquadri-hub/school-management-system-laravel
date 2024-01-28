@@ -23,7 +23,7 @@ class ForgotPasswordController extends Controller
             ]);
 
             if(user::where('email', '=', $req->input('email'))){
-                
+                dd("email sure exists");
             }
         }
         return view('auth.forgotpassword');
