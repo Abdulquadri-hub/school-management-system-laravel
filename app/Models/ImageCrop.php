@@ -70,7 +70,7 @@ class ImageCrop extends Model
     // create thumbnails to ease cropping
     public function profile_thumb($image_path)
     {
-        dd("here");
+        
         // call the crop method and set the size
         $crop_size = 600;
         // 

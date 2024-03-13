@@ -49,18 +49,6 @@
             <td>{{substr($row->content, 0, 30)}}...</td>
             <td>{{date("jS M, Y H:s:i",strtotime($row->created_at))}}</td>
             <td>
-                <!-- <a href="{{route('lesson.delete', [$row->id])}}">
-                <button class="btn btn-danger float-end me-1  btn-sm">
-                    <i class="ri ri-delete-bin-6-fill"></i>
-                </button>
-                </a>
-                
-                <a href="{{route('lesson.edit', [$row->id])}}">
-                <button class="btn btn-info float-end me-1  btn-sm">
-                    <i class="ri ri-edit-2-fill"></i>
-                </button>
-                </a> -->
-
                 <a href="{{route('lesson.single', [$row->id])}}">
                 <button class="btn btn-primary float-end me-1  btn-sm">
                     <i class="ri ri-eye-fill"></i>

@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Rank;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str; 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash; 
-use Illuminate\Support\Str; 
-use App\Models\User;
 
 class StudentsController extends Controller
 {
@@ -16,10 +17,13 @@ class StudentsController extends Controller
         $page = "Students";
 
         $user = new User();
-        $rows = $user->all()->where("rank", 'student');
+        $school_id = session()->get('USERS_ROW')->school_id;
+        $rows = $user->all()->where("rank", 'student')
+                    ->where("school_id", $school_id);
         
         return view('/students.student',[
             'page' =>$page,
+            'rank' => new Rank(),
             'rows' => $rows
         ]);
     }

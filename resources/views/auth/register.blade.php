@@ -69,25 +69,14 @@
                     <div class="col-12">
                       <select class="form-select" name="rank" id="validationCustom04">
                         <option selected disabled value>Rank</option>
-                        <option value="lecturer">Lecturer</option>
-                        <option value="parent">Parent</option>
+                        <option value="instructor">instructor</option>
                         <option value="admin">Admin</option>
-                        <option value="reception">Reception</option>
                         <option value="super admin">Super Admin</option>
                       </select>
                     </div>
                     @else
                     <div class="col-12">
-                      <select class="form-select" name="rank" id="validationCustom04">
-                        <option selected disabled value>Rank</option>
-                        <option value="student">Student</option>
-                        <option value="lecturer">Lecturer</option>
-                        <option value="parent">Parent</option>
-                        <option value="admin">Admin</option>
-                        <option value="reception">Reception</option>
-                        <option value="super admin">Super Admin</option>
-                      </select>
-                      <div class="invalid-feedback">Please enter a valid gender!</div>
+                      <input type="text" readonly name="rank" value="student" class="form-control" id="" placeholder="">
                     </div>
                     @endif
 

@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('materials', function (Blueprint $table) {
+        Schema::create('class_instructors', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('file');
-            $table->string('material_id');
             $table->string('user_id');
             $table->string('class_id');
+            $table->string('disabled')->default(0);
+            $table->foreign('class_id')->references('class_id')->on('classes');
+            $table->foreign('user_id')->references('user_id')->on('users');
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('materials');
+        Schema::dropIfExists('class_instructors');
     }
 };

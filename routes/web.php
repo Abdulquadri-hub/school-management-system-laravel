@@ -1,18 +1,21 @@
 <?php
 
-use App\Http\Controllers\EmailVerificationController;
-use App\Http\Controllers\ForgotPasswordController;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\registerController;
-use App\Http\Controllers\SchoolsController;
 use App\Http\Controllers\StaffsController;
-use App\Http\Controllers\StudentsController;
 use App\Http\Controllers\ClassesController;
 use App\Http\Controllers\LessonsController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SchoolsController;
+use App\Http\Controllers\registerController;
+use App\Http\Controllers\StudentsController;
+use App\Http\Controllers\MyClassesController;
+use App\Http\Controllers\AccessDeniedController;
+use App\Http\Controllers\VerificationController;
+use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Controllers\EmailVerificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,6 +28,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
+Route::get('/verify-email/{token}', [VerificationController::class, 'index'])->name('verification');
+Route::post('/verify-email/{token}', [VerificationController::class, 'index'])->name('verification');
+
+Route::get('/access-denied',  [AccessDeniedController::class, 'index'])->name('access.denied');
 
 Route::get('/logout', [LogoutController::class, 'logout'])->name('logout');
 
@@ -91,6 +99,10 @@ Route::group(['middleware'=>'auth'], function(){
     Route::get('/students/delete{id}', [StudentsController::class, 'delete']);
     Route::post('/students/delete{id}', [StudentsController::class, 'delete']);
 
+    // my classes / courses routes
+    Route::get('/myclasses', [MyClassesController::class, 'index'])->name('myclass');
+    
+
     // classes routes
     Route::get('/classes', [ClassesController::class, 'index'])->name('class');
     
@@ -106,7 +118,20 @@ Route::group(['middleware'=>'auth'], function(){
     Route::get('/classes/single/{id}', [ClassesController::class, 'single'])->name('class.single');
     Route::post('/classes/single/{id}', [ClassesController::class, 'single']);
 
+    Route::get('/classes/enroll/{id}', [ClassesController::class, 'enroll'])->name('class.enroll');
+    Route::post('/classes/enroll/{id}', [ClassesController::class, 'enroll']);
+
     // lessons routes
+    Route::get('/lessons', [LessonsController::class, 'index'])->name('lesson');
+    Route::get('/lessons/single/{id}', [LessonsController::class, 'single'])->name('lesson.single');
+    Route::post('/lessons/single/{id}', [LessonsController::class, 'single']);
+
+    // tests routes
+    Route::get('/tests', [LessonsController::class, 'index'])->name('test');
+    Route::get('/lessons/single/{id}', [LessonsController::class, 'single'])->name('test.single');
+ 
+
+    // assignments routes
     Route::get('/lessons', [LessonsController::class, 'index'])->name('lesson');
     Route::get('/lessons/single/{id}', [LessonsController::class, 'single'])->name('lesson.single');
     Route::post('/lessons/single/{id}', [LessonsController::class, 'single']);

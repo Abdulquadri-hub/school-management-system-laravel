@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Rank;
 use Illuminate\Http\Request;
 use App\Models\User;
 
@@ -47,17 +48,23 @@ class ProfileController extends Controller
                 break;
             
             default:
-                # code...
+                $row = User::where('user_id', $userid)->first();
                 break;
         }
 
         $row = User::where('user_id', $userid)->first();
-
-        return view('profile',[
-            'page' => $page,
-            'row' => $row,
-            'tab' => $tab
-        ]);
+// dd($row);
+        if(Rank::i_own_content($row) || Rank::hasRank('instructor'))
+        {
+            return view('profile',[
+                'page' => $page,
+                'rank' => new Rank(),
+                'row' => $row,
+                'tab' => $tab
+            ]);  
+        }else {
+            return redirect('/access-denied');
+        }
     }
 
 }

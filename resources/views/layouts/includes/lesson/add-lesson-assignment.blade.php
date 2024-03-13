@@ -1,4 +1,3 @@
-@if ($lesson_row)
 <div class="m-auto p-4" style="max-width: 500px;">
         <form method="post" class="row g-3">
             @csrf
@@ -14,21 +13,26 @@
             @endif
 
             <div class="col-12">
-                <h5 class="card-title">Lesson Title</h5>
-                <input type="text" name="title" value="{{old('title', $lesson_row->title)}}" class="form-control" id="" placeholder="Lesson Title">
+                <h5 class="card-title">Assignment Title</h5>
+                <input type="text" name="title" value="{{old('title')}}" class="form-control" id="" placeholder="Assignment Title here ...">
+            </div>  
+
+            <div class="col-12">
+                <h5 class="card-title">Assignment Due date</h5>
+                <input type="date" name="due_date" value="{{old('due_date')}}" class="form-control">
             </div>  
 
             <div class="col-12">
                 <div class="">
                     <div class="">
-                        <h5 class="card-title">Lesson Content</h5>
-                        <textarea name="content" class="form-control" placeholder="Lesson Content here...">{{ $lesson_row->content }}</textarea>
+                        <h5 class="card-title">Assignment Description</h5>
+                        <textarea name="description" class="form-control" placeholder="Assignment Description here..."></textarea>
                     </div>
                 </div>           
             </div>
 
             <div class="col-12">
-                <a href="{{route('class.single', ['id'=> $row->id, 'tab' => 'lessons'])}}">
+                <a href="{{route('class.single', ['id'=> $row->id, 'tab' => 'single-lesson', 'tab1' => 'lesson-assignment','single_lesson_id' => $single_lesson_row->id])}}">
                     <button class="btn btn-secondary float-start btn-sm" type="button">
                         <i class="ri ri-arrow-left-circle-line"></i>
                         Back
@@ -38,7 +42,6 @@
             </div>
         </form>
     </div>
-
 
 <script>
   tinymce.init({
@@ -54,9 +57,3 @@
     ai_request: (request, respondWith) => respondWith.string(() => Promise.reject("See docs to implement AI Assistant")),
   });
 </script>
-
-@else
-   <tr>
-    <td class="text-primary">No lesson data for this class</td>
-   </tr>
-@endif

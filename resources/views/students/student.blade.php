@@ -23,6 +23,10 @@
             <h5 class="card-title">
                 {{$page}}
             </h5>
+
+            <!-- message -->
+             @include("layouts.includes.messages")
+
             <div class="m-auto p-4" style="max-width: 1000px;">
                 <nav class="navbar navbar-light bg-light">
                 <form class="search-form d-flex align-items-center" method="post">
@@ -41,6 +45,7 @@
                     </button>
                 </a>
                 </nav>
+                
                 <div class="card-group justify-content-center">
                     @if(isset($rows) && $rows)
                     @foreach($rows as $row) 
@@ -53,7 +58,7 @@
                     @endif
                 </div>
 
-            <!-- pagination -->
+                <!-- pagination -->
             </div>
         </div>
     </div>

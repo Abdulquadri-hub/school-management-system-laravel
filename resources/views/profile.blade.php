@@ -182,10 +182,8 @@
                       <div class="col-md-8 col-lg-9">
                       <select class="form-select" name="rank">
                         <option selected value = "{{$row->rank}}">{{$row->rank}}</option>
-                        <option value="lecturer">Lecturer</option>
-                        <option value="parent">Parent</option>
+                        <option value="instructor">instructor</option>
                         <option value="admin">Admin</option>
-                        <option value="reception">Reception</option>
                         <option value="super admin">Super Admin</option>
                       </select>
                       </div>

@@ -19,6 +19,8 @@ class LoginController extends Controller
 
     public function save(Request $req)
     {
+        $user = new User();
+
         $validate = $req->validate([
             'email'=> "required|string|email",
             'password'=> "required"
@@ -28,17 +30,30 @@ class LoginController extends Controller
 
             $row = Auth::authenticate();
         
+            if($row->email_verified_at)
+            {
+                if($row->rank !== "super admin")
+                {
+                    $school = new School();
+                    $school_row  = $school->where('school_id', $row->school_id)->first();
+        
+                    $row->school_name = $school_row->school;
+                    
+                    $req->session()->put("USERS_ROW",$row);
+                
+                    return redirect()->intended('/');
+                }
+                
+                $school = new School();
+                $school_row  = $school->where('school_id', $row->school_id)->first();
+    
+                $row->school_name = $school_row->school;
+                
+                $req->session()->put("USERS_ROW",$row);
+                return redirect()->intended('/');
+            }
             
-            $school = new School();
-            $school_row  = $school->where('school_id', $row->school_id)->first();
-
-            $row->school_name = $school_row->school;
-            
-            $req->session()->put("USERS_ROW",$row);
-            
-
-            return redirect()->intended('/');
-
+            return back()->withErrors(['email'=>'Kindly verify your email']);
             
         }
         return back()->withErrors(['email'=>'Wrong login details']);

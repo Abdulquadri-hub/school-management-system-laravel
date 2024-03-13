@@ -1,15 +1,11 @@
-<?php
 
-use App\Models\Functions;
-
-?>
-    <!-- ======= Header ======= -->
-    <header id="header" class="header fixed-top d-flex align-items-center">
+<!-- ======= Header ======= -->
+<header id="header" class="header fixed-top d-flex align-items-center">
 
 <div class="d-flex align-items-center justify-content-between">
   <a href="{{url('/')}}" class="logo d-flex align-items-center">
     <img src="{{url('assets/img/logo.png')}}" alt="">
-    <span class="d-none d-lg-block">{{Functions::getschool_name()}}</span>
+    <span class="d-none d-lg-block">{{Helpers::getschool_name()}}</span>
   </a>
   <i class="bi bi-list toggle-sidebar-btn"></i>
 </div>
@@ -28,91 +24,73 @@ use App\Models\Functions;
       <a class="nav-link nav-icon search-bar-toggle " href="#">
         <i class="bi bi-search"></i>
       </a>
-    </li><!-- End Search Icon-->
+    </li> 
+    <!-- End Search Icon-->
 
     <li class="nav-item dropdown">
 
       <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
         <i class="bi bi-bell"></i>
-        <span class="badge bg-primary badge-number">4</span>
-      </a><!-- End Notification Icon -->
+        <span class="badge bg-primary badge-number">{{Helpers::Notifcations() ? count(Helpers::Notifcations()) : 0 }}</span>
+      </a>
 
+    @if (Helpers::Notifcations())
       <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
+
         <li class="dropdown-header">
-          You have 4 new notifications
-          <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
+          You have  <span class="badge rounded-pill bg-dark p-2 ms-2"> {{ count(Helpers::Notifcations()) ?? 0 }} </span>  new notifications
+
         </li>
         <li>
           <hr class="dropdown-divider">
         </li>
 
-        <li class="notification-item">
-          <i class="bi bi-exclamation-circle text-warning"></i>
-          <div>
-            <h4>Lorem Ipsum</h4>
-            <p>Quae dolorem earum veritatis oditseno</p>
-            <p>30 min. ago</p>
-          </div>
-        </li>
+        @forelse (Helpers::Notifcations() as $row)
 
-        <li>
-          <hr class="dropdown-divider">
-        </li>
+      <li class="notification-item">
+        <i class="bi bi-info-circle text-info"></i>
+        <div>
+          <h4>{{ $row->data['message'] }}</h4>
+          <p class="text-muted">
+            <a href="{{ $row->data['link'] }}">View</a>
+          </p>
+          <p>{{ Helpers::getTime($row->created_at) }}</p>
+        </div>
+      </li>
 
-        <li class="notification-item">
-          <i class="bi bi-x-circle text-danger"></i>
-          <div>
-            <h4>Atque rerum nesciunt</h4>
-            <p>Quae dolorem earum veritatis oditseno</p>
-            <p>1 hr. ago</p>
-          </div>
-        </li>
+      <li>
+        <hr class="dropdown-divider">
+      </li>
+      @empty
+           
+      <li class="notification-item">
+        <div>
+          <h4>Empty Notification!</h4>
+        </div>
+      </li>
+      @endforelse
 
-        <li>
-          <hr class="dropdown-divider">
-        </li>
-
-        <li class="notification-item">
-          <i class="bi bi-check-circle text-success"></i>
-          <div>
-            <h4>Sit rerum fuga</h4>
-            <p>Quae dolorem earum veritatis oditseno</p>
-            <p>2 hrs. ago</p>
-          </div>
-        </li>
-
-        <li>
-          <hr class="dropdown-divider">
-        </li>
-
-        <li class="notification-item">
-          <i class="bi bi-info-circle text-primary"></i>
-          <div>
-            <h4>Dicta reprehenderit</h4>
-            <p>Quae dolorem earum veritatis oditseno</p>
-            <p>4 hrs. ago</p>
-          </div>
-        </li>
-
-        <li>
-          <hr class="dropdown-divider">
-        </li>
         <li class="dropdown-footer">
           <a href="#">Show all notifications</a>
         </li>
 
-      </ul><!-- End Notification Dropdown Items -->
+      </ul> 
+      <!-- End Notification Dropdown Items -->
+      @endif
 
-    </li><!-- End Notification Nav -->
+    </li>       
+
+    <!-- End Notification Nav -->
 
     <li class="nav-item dropdown">
 
       <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
         <i class="bi bi-chat-left-text"></i>
         <span class="badge bg-success badge-number">3</span>
-      </a><!-- End Messages Icon -->
+      </a>
+      <!-- End Messages Icon -->
 
-      <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow messages">
+      <!-- <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow messages">
         <li class="dropdown-header">
           You have 3 new messages
           <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
@@ -167,7 +145,8 @@ use App\Models\Functions;
           <a href="#">Show all messages</a>
         </li>
 
-      </ul><!-- End Messages Dropdown Items -->
+      </ul> -->
+      <!-- End Messages Dropdown Items -->
 
     </li>
     <!-- End Messages Nav -->
@@ -260,12 +239,14 @@ use App\Models\Functions;
 
       <li class="nav-heading">Pages</li>
 
+      @if ($rank->hasRank('super admin'))
       <li class="nav-item">
         <a class="nav-link collapsed" href="{{url('/schools')}}">
           <i class="bi bi-house-fill"></i>
           <span>Schools</span>
         </a>
       </li>
+      @endif
 
       <li class="nav-item">
         <a class="nav-link collapsed" href="{{url('/classes')}}">
@@ -274,19 +255,23 @@ use App\Models\Functions;
         </a>
       </li>
 
+      @if ($rank->hasRank())
       <li class="nav-item">
-        <a class="nav-link collapsed" href="{{route('lesson')}}">
-          <i class="bi bi-book-fill"></i>
-          <span>Lessons</span>
+        <a class="nav-link collapsed" href="{{route('myclass')}}">
+          <i class="bi bi-house"></i>
+          <span>My Classes</span>
         </a>
       </li>
+      @endif
 
+      @if ($rank->hasRank('instructor'))
       <li class="nav-item">
         <a class="nav-link collapsed" href="{{url('/staffs')}}">
           <i class="bi bi-person-fill"></i>
           <span>Staffs</span>
         </a>
       </li>
+      @endif
 
       <li class="nav-item">
         <a class="nav-link collapsed" href="{{url('/students')}}">
@@ -294,13 +279,6 @@ use App\Models\Functions;
           <span>Students</span>
         </a>
       </li>
-
-      <li class="nav-item">
-        <a class="nav-link collapsed" href="{{url('/faq')}}">
-          <i class="bi bi-question-circle"></i>
-          <span>F.A.Q</span>
-        </a>
-      </li><!-- End F.A.Q Page Nav -->
 
       <li class="nav-item">
         <a class="nav-link collapsed" href="{{url('/contact')}}">
@@ -322,13 +300,6 @@ use App\Models\Functions;
           <span>Login</span>
         </a>
       </li><!-- End Login Page Nav -->
-
-      <li class="nav-item">
-        <a class="nav-link collapsed" href="{{url('page-404')}}">
-          <i class="bi bi-dash-circle"></i>
-          <span>Error 404</span>
-        </a>
-      </li><!-- End Error 404 Page Nav -->
 
     </ul>
 

@@ -4,7 +4,6 @@
     @endphp
 
     <div class="card m-2 shadow" style="max-width: 12rem; min-width:12rem;">
-    <div class="card-header">{{str_replace("s", "", $page)}}</div>
     <img src="{{url(''.$image)}}" alt="card-img-top" class="card-img-top">
     <div class="card-body">
     <h5 class="card-title">{{ucfirst($row->firstname)}} {{ucfirst($row->lastname)}}</h5>

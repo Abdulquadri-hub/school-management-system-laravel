@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Rank;
 use App\Models\User;
+use Illuminate\Http\Request;
 
 class StaffsController extends Controller
 {
@@ -11,10 +12,13 @@ class StaffsController extends Controller
     {
         $page = "Staffs";
 
-        $rows = User::all()->where('rank', '!=', "student");
+        $school_id = session()->get('USERS_ROW')->school_id;
+        $rows = User::all()->where('rank', '!=', "student")
+                    ->where("school_id", $school_id);
 
         return view('staffs.view',[
             'page' =>$page,
+            'rank' => new Rank(),
             'rows' => $rows
         ]);
     }
