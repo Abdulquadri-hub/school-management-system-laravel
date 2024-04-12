@@ -41,9 +41,10 @@ class NewLessonAssignmentNotification extends Notification
     {
         return (new MailMessage)
                     ->greeting("Hello!" . " " . $this->enrolled_student->firstname . " " . $this->enrolled_student->lastname)
-                    ->line("A new lesson has been added to your class!")
-                    ->action('View Class', url("/classes/single/" . $this->enrolled_student->classid . "?tab=lessons"))
-                    ->line('Thank you for using School Laravel!');
+                    ->line("A new assignment for the lesson " . $this->enrolled_student->title . " has been added to your class: " . $this->enrolled_student->class)
+                    ->action('View lesson assignment', url("/classes/single/" . $this->enrolled_student->classid . "?tab=single-lesson&single_lesson_id=" . $this->enrolled_student->lid . "&tab1=lesson-assignment"))
+                    ->line('Thank you for using Laravel School lms!');
+                    // 
     }
 
     /**
@@ -54,8 +55,8 @@ class NewLessonAssignmentNotification extends Notification
     public function toDatabase(object $notifiable)
     {
         return new DatabaseMessage([
-            'message' => 'A new lesson has been added to your class!',
-            'link' =>  url("/classes/single/" . $this->enrolled_student->classid . "?tab=lessons"),
+            'message' => "A new assignment for the lesson: " . $this->enrolled_student->title . " has been added to your class: " . $this->enrolled_student->class,
+            'link' =>  url("/classes/single/" . $this->enrolled_student->classid . "?tab=single-lesson&single_lesson_id=" . $this->enrolled_student->lid . "&tab1=lesson-assignment"),
         ]);
     }
 }

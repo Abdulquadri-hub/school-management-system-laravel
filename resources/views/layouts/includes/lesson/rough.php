@@ -1,19 +1,6 @@
-
-@if ($rank->hasRank('instructor')) 
-  <a href="{{route('class.single', ['id'=> $row->id, 'tab' => 'add-lesson'])}}">
-      <button class="btn btn-primary float-end btn-sm mt-2">
-        <i class="bi bi-plus"></i>
-          Add New
-      </button>
-  </a>
-@endif
-
-
-
-
-  <div class="row mt-5">
-        @if(isset($lessons_rows) && $lessons_rows)
-          @foreach($lessons_rows as $key => $row)
+<div class="row mt-5">
+        @if(isset($assignments) && $assignments)
+          @foreach($assignments as $key => $row)
         <div class="col-xxl-4 col-md-4">
           <div class="card info-card sales-card">
 
@@ -45,20 +32,20 @@
                 <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
 
                 @if ($rank->hasRank('instructor')) 
-                <a href="{{route('class.single', ['id' => $row->classid, 'tab' => 'delete-lesson', 'lesson_id' => $row->id])}}">
+                <a href="{{route('class.single', ['id'=> $row->classid, 'tab' => 'single-lesson','single_lesson_id' => $single_lesson_row->id, 'tab1' => 'delete-lesson-assignment', 'asgn_id' => $row->id])}}">
                 <button class="btn btn-danger float-end me-1  btn-sm">
                     <i class="ri ri-delete-bin-6-fill"></i>
                 </button>
                 </a>
                 
-                <a href="{{route('class.single', ['id'=> $row->classid, 'tab' => 'edit-lesson', 'lesson_id' => $row->id])}}">
+                <a href="{{route('class.single', ['id'=> $row->classid, 'tab' => 'single-lesson','single_lesson_id' => $single_lesson_row->id, 'tab1' => 'edit-lesson-assignment', 'asgn_id' => $row->id])}}">
                 <button class="btn btn-info float-end me-1  btn-sm">
                     <i class="ri ri-edit-2-fill"></i>
                 </button>
                 </a>
 
               @endif
-                <a href="{{route('class.single', ['id'=> $row->classid, 'tab' => 'single-lesson', 'single_lesson_id' => $row->id, 'read-lsn' => 'true'])}}">
+                <a href="{{route('class.single', ['id'=> $row->classid, 'tab' => 'single-lesson', 'single_lesson_id' => $single_lesson_row->id, 'tab1' => 'single-lesson-assignment', 'asgn_id' => $row->id, 'read-asgn' => 'true'])}}">
                 <button class="btn btn-primary float-end me-1  btn-sm">
                     <i class="ri ri-eye-fill"></i>
                 </button>
@@ -75,6 +62,6 @@
         </div>
         @endforeach
         @else 
-        <p class="text-center text-muted m-auto">No Lesson was found for this class at this time!</p>
+        <p class="text-center text-muted m-auto">No assignment was found for this lesson at this time!</p>
         @endif
-  </div>
+</div>

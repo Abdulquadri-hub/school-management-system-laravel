@@ -3,18 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\assignment;
+use App\Models\class_enroll_students;
+use App\Models\class_instructor;
+use App\Models\class_lesson;
+use App\Models\class_lesson_assignments_submision;
+use App\Models\class_lesson_assignments_submission_grade;
+use App\Models\Classes;
 use App\Models\Rank;
 use App\Models\User;
-use App\Models\Classes;
-use App\Models\class_lesson;
+use App\Notifications\NewLessonAssignmentNotification;
+use App\Notifications\NewLessonNotification;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str; 
-use App\Models\class_instructor;
+use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use App\Models\class_enroll_students;
-use App\Notifications\NewLessonNotification;
-use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Support\Str; 
 
 class ClassesController extends Controller
 {
@@ -167,6 +170,8 @@ class ClassesController extends Controller
         $class_instructor = new class_instructor();
         $class_enroll_student = new class_enroll_students();
         $lesson_assignment = new Assignment();
+        $lesson_assignment_submission = new class_lesson_assignments_submision();
+        $class_lesson_assignment_submission_grade = new class_lesson_assignments_submission_grade();
         $user = new User();
 
         $tab = $_GET['tab'] ??  "";
@@ -179,6 +184,9 @@ class ClassesController extends Controller
         $single_lesson_row = [];
         $instructors = [];
         $enrolled_students = [];
+        $assignments = [];
+        $assignment = [];
+        $lesson_assignment_submissions = [];
 
         if(Rank::hasRank("student"))
         {
@@ -198,7 +206,7 @@ class ClassesController extends Controller
             $lrow = $class_lesson->find($single_lesson_id);
         }
 
-        switch ($tab || $tab1) {
+        switch ($tab) {
 
             case 'instructors':
                 
@@ -315,13 +323,11 @@ class ClassesController extends Controller
                 ->join('users', 'class_lessons.user_id', '=', 'users.user_id')
                 ->select('users.firstname', 'users.lastname', 'users.rank', 'classes.id as classid', 'class_lessons.*')
                 ->get();
-
-                dd($lessons);
                 
                 break;
 
             case 'add-lesson':
-                             
+                          
                 if($req->method() == "POST"){
                 
                 $req->validate([
@@ -329,7 +335,7 @@ class ClassesController extends Controller
                 'content' => "required|string"
                 ]);
 
-                // $content = Str::of($req->input('content'))->stripTags();
+                
                 
                 $save = $class_lesson->insert([
                     'title' => $req->input('title'),
@@ -348,7 +354,8 @@ class ClassesController extends Controller
                     ->where('class_enroll_students.enrolled', 1)
                     ->join('users',  'users.user_id' , '=', 'class_enroll_students.user_id')
                     ->join('classes',  'classes.class_id' , '=', 'class_enroll_students.class_id')
-                    ->select('users.*', 'classes.id as classid')
+                    ->join('class_lessons',  'class_lessons.class_id' , '=', 'class_enroll_students.class_id')
+                    ->select('users.*', 'classes.class', 'classes.id as classid', 'class_lessons.title', 'class_lessons.id as lid')
                     ->get();
                    
                     $students = [];
@@ -503,9 +510,12 @@ class ClassesController extends Controller
                 $enrolled_students = $class_enroll_student->where('class_enroll_students.class_id', $row->class_id)
                 ->where('class_enroll_students.enrolled', 1)
                 ->join('users',  'users.user_id' , '=', 'class_enroll_students.user_id')
-                ->select('users.*')
+                ->join('classes',  'classes.class_id' , '=', 'class_enroll_students.class_id')
+                ->join('class_lessons',  'class_lessons.class_id' , '=', 'class_enroll_students.class_id')
+                ->select('users.*', 'classes.class', 'classes.id as classid', 'class_lessons.title', 'class_lessons.id as lid')
                 ->get();
-                dd($enrolled_students);
+
+                // dd($enrolled_students);
                 break;
             
             case 'remove-enrolled-student':
@@ -576,6 +586,218 @@ class ClassesController extends Controller
                 break;
         }
 
+        if($tab && $tab1) 
+        {
+           switch ($tab1) {
+            case 'lesson-assignment':
+
+                $lrow = $class_lesson->find($single_lesson_id);
+                //where('assignments.class_id', $row->class_id)
+                $assignments = $lesson_assignment
+                ->where('assignments.lesson_id', $lrow->lesson_id)
+                ->join('classes', 'assignments.class_id', '=', 'classes.class_id')
+                ->join('class_lessons', 'assignments.lesson_id', '=', 'class_lessons.lesson_id')
+                ->join('users', 'assignments.user_id', '=', 'users.user_id')
+                ->select('users.*', 'classes.class', 'assignments.*', 'class_lessons.title as class_lessontitle', 'classes.id as classid')
+                ->get();
+
+                foreach($assignments as $assignment)
+                {
+                    $assignment = $assignment;
+                } 
+                // dd($assignments);
+
+
+                if($req->method() == "POST"){
+                    $req->validate([
+                    'assignment_link' => "required",
+                    ]);
+                    
+                    $save = $lesson_assignment_submission->insert([
+                        'assignment_link' => $req->input('assignment_link'),
+                        'assignment_sub_id' => Str::random(),
+                        'assignment_id' => $req->input('assignment_id'),
+                        'lesson_id' => $lrow->lesson_id,
+                        'class_id' => $row->class_id,
+                        'user_id' => $req->session()->get('USERS_ROW')->user_id,
+                        'created_at' => date("Y-m-d H:i:s"),
+                        'updated_at' => date("Y-m-d H:i:s")
+                    ]);
+    
+                    if($save){
+    
+                        //send notification for assignment submission i will integrate this later
+                        // $enrolled_students = $class_enroll_student->where('class_enroll_students.class_id', $row->class_id)
+                        // ->where('class_enroll_students.enrolled', 1)
+                        // ->join('users',  'users.user_id' , '=', 'class_enroll_students.user_id')
+                        // ->join('classes',  'classes.class_id' , '=', 'class_enroll_students.class_id')
+                        // ->join('class_lessons',  'class_lessons.class_id' , '=', 'class_enroll_students.class_id')
+                        // ->select('users.*', 'classes.class', 'classes.id as classid', 'class_lessons.title', 'class_lessons.id as lid')
+                        // ->get();
+                       
+                        // $students = [];
+                        // foreach($enrolled_students as $enrolled_student)
+                        // {
+                        //     try {
+                        //         if (!is_null($enrolled_student->email)) {
+                        //             $enrolled_student->notify(new NewLessonAssignmentNotification($enrolled_student));
+                        //         }
+                        //     } catch (\Exception $e) {
+                        //         Log::error("Error sending notification: " . $e->getMessage());
+                        //     }
+                        // }
+    
+                    return redirect("/classes/single/$id?tab=single-lesson&single_lesson_id=$lrow->id&tab1=lesson-assignment")->with('status', 'Assignment submission was successful!');
+                    }
+    
+                    return back()->withErrors('lessons', 'Something went wrong!');
+                }
+
+                break;
+            
+            case 'add-lesson-assignment':
+                //
+                                             
+                if($req->method() == "POST"){
+                
+                    $req->validate([
+                    'title' => "required|string",
+                    'description' => "required|string",
+                    'due_date' => "required"
+                    ]);
+                    
+                    $save = $lesson_assignment->insert([
+                        'title' => $req->input('title'),
+                        'description' => $req->input('description'),
+                        'assignment_id' => Str::random(),
+                        'lesson_id' => $lrow->lesson_id,
+                        'class_id' => $row->class_id,
+                        'user_id' => $req->session()->get('USERS_ROW')->user_id,
+                        'due_date' => $req->input('due_date'),
+                        'created_at' => date("Y-m-d H:i:s"),
+                        'updated_at' => date("Y-m-d H:i:s")
+                    ]);
+    
+                    if($save){
+    
+                        //send notification
+                        // $enrolled_students = $class_enroll_student->where('class_enroll_students.class_id', $row->class_id)
+                        // ->where('class_enroll_students.enrolled', 1)
+                        // ->join('users',  'users.user_id' , '=', 'class_enroll_students.user_id')
+                        // ->join('classes',  'classes.class_id' , '=', 'class_enroll_students.class_id')
+                        // ->join('class_lessons',  'class_lessons.class_id' , '=', 'class_enroll_students.class_id')
+                        // ->select('users.*', 'classes.class', 'classes.id as classid', 'class_lessons.title', 'class_lessons.id as lid')
+                        // ->get();
+                       
+                        // $students = [];
+                        // foreach($enrolled_students as $enrolled_student)
+                        // {
+                        //     try {
+                        //         if (!is_null($enrolled_student->email)) {
+                        //             $enrolled_student->notify(new NewLessonAssignmentNotification($enrolled_student));
+                        //         }
+                        //     } catch (\Exception $e) {
+                        //         Log::error("Error sending notification: " . $e->getMessage());
+                        //     }
+                        // }
+    
+                    return redirect("/classes/single/$id?tab=single-lesson&single_lesson_id=$lrow->id&tab1=lesson-assignment")->with('status', 'New lesson assignment added!');
+                    
+    
+                    }
+    
+                    return back()->withErrors('lessons', 'Something went wrong!');
+                }
+            case 'lesson-assignment-submission':
+                //
+
+                $lrow = $class_lesson->find($single_lesson_id);
+                $user_id = session()->get('USERS_ROW')->user_id;
+
+                if(Rank::hasRank("student"))
+                {                    
+                    $lesson_assignment_submissions = $lesson_assignment_submission
+                    ->where('class_lesson_assignments_submisions.lesson_id', $lrow->lesson_id)
+                    ->where('class_lesson_assignments_submisions.user_id', $user_id)
+                    ->join('classes', 'class_lesson_assignments_submisions.class_id', '=', 'classes.class_id')
+                    ->join('class_lessons', 'class_lesson_assignments_submisions.lesson_id', '=', 'class_lessons.lesson_id')
+                    ->join('class_lesson_assignments_submission_grades', 'class_lesson_assignments_submisions.assignment_sub_id', '=', 'class_lesson_assignments_submission_grades.assignment_sub_id')
+                    ->join('users', 'class_lesson_assignments_submisions.user_id', '=', 'users.user_id')
+                    ->select('users.*', 'classes.class', 'class_lesson_assignments_submisions.*', 'class_lessons.title as class_lessontitle', 'classes.id as classid', 'class_lesson_assignments_submission_grades.grade')
+                    ->get();
+                }
+                else
+                if(Rank::hasRank("instructor"))
+                {
+                    $lesson_assignment_submissions = $lesson_assignment_submission
+                    ->where('class_lesson_assignments_submisions.lesson_id', $lrow->lesson_id)
+                    // ->where('class_lesson_assignments_submisions.user_id', $user_id)
+                    ->join('classes', 'class_lesson_assignments_submisions.class_id', '=', 'classes.class_id')
+                    ->join('class_lessons', 'class_lesson_assignments_submisions.lesson_id', '=', 'class_lessons.lesson_id')
+                    ->join('users', 'class_lesson_assignments_submisions.user_id', '=', 'users.user_id')
+                    ->join('class_lesson_assignments_submission_grades', 'class_lesson_assignments_submisions.assignment_sub_id', '=', 'class_lesson_assignments_submission_grades.assignment_sub_id')
+                    ->select('users.*', 'classes.class', 'class_lesson_assignments_submisions.*', 'class_lessons.title as class_lessontitle', 'classes.id as classid','class_lesson_assignments_submission_grades.grade')
+                    ->get();
+                }
+
+
+                if($req->method() == "POST"){
+                
+                    $req->validate([
+                    'grade' => "required|string",
+                    ]);
+
+                    $save = $class_lesson_assignment_submission_grade->insert([
+                        'grade' => $req->input('grade'),
+                        'assignment_sub_grade_id' => Str::random(),
+                        'assignment_sub_id' => $req->input('assignment_sub_id'),
+                        'assignment_id' => $req->input('assignment_id'),
+                        'lesson_id' => $lrow->lesson_id,
+                        'class_id' => $row->class_id,
+                        'user_id' => $req->session()->get('USERS_ROW')->user_id,
+                        'created_at' => date("Y-m-d H:i:s"),
+                        'updated_at' => date("Y-m-d H:i:s")
+                    ]);
+    
+                    if($save){
+    
+                        //send notification
+                        // $enrolled_students = $class_enroll_student->where('class_enroll_students.class_id', $row->class_id)
+                        // ->where('class_enroll_students.enrolled', 1)
+                        // ->join('users',  'users.user_id' , '=', 'class_enroll_students.user_id')
+                        // ->join('classes',  'classes.class_id' , '=', 'class_enroll_students.class_id')
+                        // ->join('class_lessons',  'class_lessons.class_id' , '=', 'class_enroll_students.class_id')
+                        // ->select('users.*', 'classes.class', 'classes.id as classid', 'class_lessons.title', 'class_lessons.id as lid')
+                        // ->get();
+                       
+                        // $students = [];
+                        // foreach($enrolled_students as $enrolled_student)
+                        // {
+                        //     try {
+                        //         if (!is_null($enrolled_student->email)) {
+                        //             $enrolled_student->notify(new NewLessonAssignmentNotification($enrolled_student));
+                        //         }
+                        //     } catch (\Exception $e) {
+                        //         Log::error("Error sending notification: " . $e->getMessage());
+                        //     }
+                        // }
+    
+                    return redirect("/classes/single/$id?tab=single-lesson&single_lesson_id=$lrow->id&tab1=lesson-assignment-submission")->with('status', 'Assignment has been graded!');
+                    
+    
+                    }
+    
+                    return back()->withErrors('lessons', 'Something went wrong!');
+                }
+
+                break;
+            
+            default:
+                # code...
+                break;
+           }
+        }
+
             return view('classes.single', [
                 'page' => $row->class,
                 'row' => $row,
@@ -586,6 +808,9 @@ class ClassesController extends Controller
                 'rank' => new Rank(),
                 'lesson_row' => $lesson_row,
                 'single_lesson_row' => $single_lesson_row,
+                'assignments' => $assignments,
+                'lesson_assignment_submissions' => $lesson_assignment_submissions,
+                'assignment' => $assignment,
                 'enrolled_student_rows' => $enrolled_students
             ]);
 
