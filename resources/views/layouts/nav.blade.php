@@ -248,12 +248,14 @@
       </li>
       @endif
 
+      @if ($rank->hasRank('instructor'))
       <li class="nav-item">
         <a class="nav-link collapsed" href="{{url('/classes')}}">
           <i class="bi bi-house"></i>
           <span>Classes</span>
         </a>
       </li>
+      @endif
 
       @if ($rank->hasRank())
       <li class="nav-item">
